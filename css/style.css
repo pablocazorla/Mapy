@@ -1,0 +1,8 @@
+body{font: 14px/1.3em sans-serif;}
+
+
+
+.mapy{
+	position:fixed;top:10px;left: 10px;right: 10px;bottom: 10px;
+	background-color: #EEE;border: solid 1px #BBB;overflow: hidden
+}
