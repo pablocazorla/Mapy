@@ -51,3 +51,17 @@ var extend = function(destination, source) {
 	}
 	return destination;
 };
+
+var clone = function(obj) {
+	if (null === obj || "object" != typeof obj) return obj;
+	var copy = obj.constructor();
+	for (var attr in obj) {
+		if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+	}
+	return copy;
+};
+
+// event handler
+var on = function(element, eventType, handler) {
+	element.addEventListener(eventType, handler, false);
+};

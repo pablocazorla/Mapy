@@ -4,7 +4,7 @@ var sel = function(selection, context) {
 		return this.init(selection, context);
 	};
 	selectorNode.prototype = {
-		mapySelector : true,
+		mapySelector: true,
 		init: function(selection, context) {
 			if (typeof selection === 'string') {
 				var ctx = context || document;
@@ -27,9 +27,11 @@ var sel = function(selection, context) {
 				},
 				scale: {
 					x: 1
-				}
+				},
+				centered: false,
+				perspective: 0
 			};
-			return this;
+			return this.transform();
 		},
 		setId: function(str) {
 			this.elem[0].id = str;
@@ -42,25 +44,32 @@ var sel = function(selection, context) {
 			var a = [];
 			for (var i = 0; i < this.length; i++) {
 				var el = sel(this.elem[i]);
+				el.t.centered = true;
+				el.transform();
 				a.push(el);
 			}
 			return a;
 		},
-		append : function(el){
-			if(typeof el.mapySelector !== 'undefined'){
+		centered: function(flag) {
+			var fl = flag || true;
+			this.t.centered = fl;
+			return this;
+		},
+		append: function(el) {
+			if (typeof el.mapySelector !== 'undefined') {
 				var self = this;
-				el.each(function(e){
+				el.each(function(e) {
 					self.elem[0].appendChild(e);
 				});
-			}else{
+			} else {
 				this.elem[0].appendChild(el);
 			}
 			return this;
 		},
-		appendTo : function(el){
-			if(typeof el.mapySelector !== 'undefined'){
-				el.append(this);			
-			}else{
+		appendTo: function(el) {
+			if (typeof el.mapySelector !== 'undefined') {
+				el.append(this);
+			} else {
 				sel(el).append(this);
 			}
 			return this;
@@ -83,22 +92,40 @@ var sel = function(selection, context) {
 			}
 			return this;
 		},
-		transform: function(properties) {
+		transform: function(properties, reverse) {
+			var rev = reverse || false;
 			for (var a in properties) {
 				props = properties[a];
 				for (var b in props) {
 					this.t[a][b] = props[b];
 				}
 			}
-
-			var strTransform = 'translate3d(' + this.t.translate.x + 'px,' + this.t.translate.y + 'px,' + this.t.translate.z + 'px)';
-			strTransform += ' rotateX(' + this.t.rotate.x + 'deg) rotateY(' + this.t.rotate.y + 'deg) rotateZ(' + this.t.rotate.z + 'deg)';
-			strTransform += ' scale(' + this.t.scale.x + ')';
-
+			var strTransform = (this.t.perspective > 0) ? 'perspective(' + this.t.perspective + 'px) ' : '';
+			if (rev) {
+				strTransform += ' scale(' + this.t.scale.x + ')';
+				strTransform += ' rotateZ(' + this.t.rotate.z + 'deg) rotateY(' + this.t.rotate.y + 'deg) rotateX(' + this.t.rotate.x + 'deg)';			
+				strTransform += 'translate3d(' + this.t.translate.x + 'px,' + this.t.translate.y + 'px,' + this.t.translate.z + 'px)';
+				strTransform += (this.t.centered) ? 'translate(-50%,-50%) ' : '';
+			}else{
+				strTransform += (this.t.centered) ? 'translate(-50%,-50%) ' : '';
+				strTransform += 'translate3d(' + this.t.translate.x + 'px,' + this.t.translate.y + 'px,' + this.t.translate.z + 'px)';
+				strTransform += ' rotateX(' + this.t.rotate.x + 'deg) rotateY(' + this.t.rotate.y + 'deg) rotateZ(' + this.t.rotate.z + 'deg)';
+				strTransform += ' scale(' + this.t.scale.x + ')';
+			}
 			this.css({
 				'transform': strTransform
 			});
 			return this;
+		},
+		width: function() {
+			return this.elem[0].offsetWidth;
+		},
+		height: function() {
+			return this.elem[0].offsetHeight;
+		},
+		perspective: function(val) {
+			this.t.perspective = val;
+			return this.transform();
 		}
 	};
 
