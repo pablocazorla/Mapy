@@ -18,6 +18,9 @@ var mapy = function(id) {
 	mapyClass.prototype = {
 		init: function(id) {
 			this.id = id;
+			this.editMode = false;
+			this.animating = false;
+			this.onFinishChange = function(){};
 
 			var timing = 1000;
 
@@ -57,19 +60,23 @@ var mapy = function(id) {
 
 			// Initial parameters **********************************************/
 			// current Step
-			this.current = 0;
+			this.current = -1;
 			this.setSizes().setEvents(this);
 			return this;
 		},
 		setSizes: function() {
-			this.width = this.$container.width() - 2*margin;
-			this.height = this.$container.height() - 2*margin;
+			this.width = this.$container.width() - 2 * margin;
+			this.height = this.$container.height() - 2 * margin;
 			this.mod = this.width / this.height;
 			return this;
 		},
-		changeSlide: function(num) {
-			this.current = num;
-			this.setZoom().setPosition();
+		changeSlide: function(num,onFinish) {
+			if (!this.animating && this.current !== num) {
+				this.onFinishChange = onFinish || function(){};
+				this.animating = true;
+				this.current = num;
+				this.setZoom().setPosition();
+			}
 
 			return this;
 		},
@@ -117,6 +124,16 @@ var mapy = function(id) {
 			on(window, 'resize', function() {
 				self.setSizes().setZoom();
 			});
+
+			var transitEnd = function() {
+				self.animating = false;
+				self.onFinishChange();			
+			}
+
+			on(this.$moveRotater.node(), 'webkitTransitionEnd', transitEnd);
+			on(this.$moveRotater.node(), 'oTransitionEnd', transitEnd);
+			on(this.$moveRotater.node(), 'transitionEnd', transitEnd);
+			on(this.$moveRotater.node(), 'transitionend', transitEnd);
 
 		},
 		setup: function(props) {
