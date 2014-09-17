@@ -1,67 +1,103 @@
-// Utils
-var cssfix = (function() {
-	var styles = document.createElement('div').style,
-		prefixes = 'Webkit Moz O ms'.split(' '),
-		cache = {},
-		capitalize = function(str) {
-			return str.charAt(0).toUpperCase() + str.slice(1);
-		},
-		toCamel = function(str) {
-			var arryStr = str.split('-'),
-				camelStr = arryStr[0];
-			for (var i = 1; i < arryStr.length; i++) {
-				camelStr += capitalize(arryStr[i]);
-			}
-			return camelStr;
-		};
+/*
+ * UTILITIES
+ *********************************************/
 
-	return function(property) {
-		if (typeof cache[property] === 'undefined') {
-			var camelProperty = toCamel(property),
-				capitalizedProperty = capitalize(camelProperty),
-				prefixedProperties = (camelProperty + ' ' + prefixes.join(capitalizedProperty + ' ') + capitalizedProperty).split(' ');
+/*
+ * Styles group, to verify if exist some style name
+ * @type {object}
+ */
+var dummyStyles = document.createElement('div').style,
 
-			cache[property] = null;
-			for (var i in prefixedProperties) {
-				if (styles[prefixedProperties[i]] !== undefined) {
-					cache[property] = prefixedProperties[i];
-					break;
+	/* It return right css property name, according to current prefix browser. Also convert the string to camel case
+	 * @type {function} @return {string}
+	 */
+	cssfix = (function() {
+		var prefixes = 'Webkit Moz O ms'.split(' '),
+			cache = {},
+			capitalize = function(str) {
+				return str.charAt(0).toUpperCase() + str.slice(1);
+			},
+			toCamel = function(str) {
+				var arryStr = str.split('-'),
+					camelStr = arryStr[0];
+				for (var i = 1; i < arryStr.length; i++) {
+					camelStr += capitalize(arryStr[i]);
+				}
+				return camelStr;
+			};
+		return function(property) {
+			if (typeof cache[property] === 'undefined') {
+				var camelProperty = toCamel(property),
+					capitalizedProperty = capitalize(camelProperty),
+					prefixedProperties = (camelProperty + ' ' + prefixes.join(capitalizedProperty + ' ') + capitalizedProperty).split(' ');
+
+				cache[property] = null;
+				for (var i in prefixedProperties) {
+					if (dummyStyles[prefixedProperties[i]] !== undefined) {
+						cache[property] = prefixedProperties[i];
+						break;
+					}
 				}
 			}
+			return cache[property];
 		}
-		return cache[property];
-	}
-})();
+	})(),
 
-// 'arraify' takes an array-like object and turns it into real Array
-// to make all the Array.prototype goodness available.
-var arrayify = function(a) {
-	return [].slice.call(a);
-};
+	/*
+	 * Convert NodeList to Array
+	 * @type {function} @return {array}
+	 */
+	NodeListToArray = function(nl) {
+		/*var arr = [];
+		for(var i = nl.length; i--; arr.unshift(nl[i]));*/
+		return [].slice.call(nl);
+	},
 
-var extend = function(destination, source) {
-	var source = source || {};
-	for (var property in source) {
-		if (source[property] && source[property].constructor && source[property].constructor === Object) {
-			destination[property] = destination[property] || {};
-			arguments.callee(destination[property], source[property]);
-		} else {
-			destination[property] = source[property];
+	/*
+	 * Extend an object with another
+	 * @type {function} @return {object}
+	 */
+	extend = function(destination, source) {
+		var source = source || {};
+		for (var property in source) {
+			if (source[property] && source[property].constructor && source[property].constructor === Object) {
+				destination[property] = destination[property] || {};
+				arguments.callee(destination[property], source[property]);
+			} else {
+				destination[property] = source[property];
+			}
 		}
-	}
-	return destination;
-};
+		return destination;
+	},
 
-var clone = function(obj) {
-	if (null === obj || "object" != typeof obj) return obj;
-	var copy = obj.constructor();
-	for (var attr in obj) {
-		if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-	}
-	return copy;
-};
+	/*
+	 * Counter used only to generate a unique and random id for a node, if necessary
+	 * @type {number}
+	 */
+	idCounter = Math.floor(Math.random() * 99999);
 
-// event handler
+/*
+ * Event handler
+ * @type {function} @return {null}
+ */
 var on = function(element, eventType, handler) {
-	element.addEventListener(eventType, handler, false);
-};
+		element.addEventListener(eventType, handler, false);
+	},
+
+	/*
+	 * Event Key handler
+	 * @type {function} @return {null}
+	 */
+	onKeyPress = function(element, keycode, handler) {
+		on(element, 'keydown', function(e) {
+			var unicode = e.keyCode ? e.keyCode : e.charCode;
+			if (keyUp && unicode === keycode) {
+				keyUp = false;
+				handler();
+			}
+		});
+	},
+	keyUp = true;
+on(window, 'keyup', function() {
+	keyUp = true;
+});

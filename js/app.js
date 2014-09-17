@@ -2,35 +2,52 @@
 var myMapy = mapy();
 
 
-myMapy.setup([{
-	translate: {
-		x: 300,
-		y: 400,
-		z: -1000
-	},
-	rotate: {
-		x: 60,
-		y: 60,
-		z: 45
+myMapy.setup([
+	/*{
+		translate: {
+			x: 0,
+			y: 0,
+			z: 0
+		}
+	}, */{
+		translate: {
+			x: 0,
+			y: 0,
+			z: 0
+		}
+	}, {
+		translate: {
+			x: 600,
+			y: -200,
+			z: 0
+		},
+		rotate: {
+			x: -20,
+			y: 150
+		}
+	}, {
+		translate: {
+			x: 0,
+			y: 270,
+			z: 0
+		},
+		rotate: {
+			x: 45,
+			z: 15
+		}
+	}, {
+		translate: {
+			x: 500,
+			y: 270,
+			z: 0
+		},
+		rotate: {
+			z: 90
+		}
 	}
-}, {
-	translate: {
-		x: 400,
-		y: 0,
-		z: 0
-	},
-	rotate: {
-		z: -55
-	}
-}, {
-	translate: {
-		x: 0,
-		y: 300,
-		z: 0
-	}
-}]);
+]);
 
-
+/*
 n = 0;
 
 
@@ -43,3 +60,4 @@ setInterval(function() {
 }, 4000);
 
 console.log(myMapy);
+*/

@@ -1,4 +1,11 @@
-// Selector Node
+/*
+ * DOM Nodes HANDLER
+ *********************************************/
+
+/*
+ * All interaction with DOM nodes is through this function
+ * @type {function} @return {object}
+ */
 var sel = function(selection, context) {
 	var selectorNode = function(selection, context) {
 		return this.init(selection, context);
@@ -8,7 +15,7 @@ var sel = function(selection, context) {
 		init: function(selection, context) {
 			if (typeof selection === 'string') {
 				var ctx = context || document;
-				this.elem = arrayify(ctx.querySelectorAll(selection));
+				this.elem = NodeListToArray(ctx.querySelectorAll(selection));
 			} else {
 				this.elem = [selection];
 			}
@@ -34,7 +41,9 @@ var sel = function(selection, context) {
 			return this.transform();
 		},
 		setId: function(str) {
-			this.elem[0].id = str;
+			if (this.length > 0) {
+				this.elem[0].id = str;
+			}
 			return this;
 		},
 		node: function() {
@@ -103,10 +112,10 @@ var sel = function(selection, context) {
 			var strTransform = (this.t.perspective > 0) ? 'perspective(' + this.t.perspective + 'px) ' : '';
 			if (rev) {
 				strTransform += ' scale(' + this.t.scale.x + ')';
-				strTransform += ' rotateZ(' + this.t.rotate.z + 'deg) rotateY(' + this.t.rotate.y + 'deg) rotateX(' + this.t.rotate.x + 'deg)';			
+				strTransform += ' rotateZ(' + this.t.rotate.z + 'deg) rotateY(' + this.t.rotate.y + 'deg) rotateX(' + this.t.rotate.x + 'deg)';
 				strTransform += 'translate3d(' + this.t.translate.x + 'px,' + this.t.translate.y + 'px,' + this.t.translate.z + 'px)';
 				strTransform += (this.t.centered) ? 'translate(-50%,-50%) ' : '';
-			}else{
+			} else {
 				strTransform += (this.t.centered) ? 'translate(-50%,-50%) ' : '';
 				strTransform += 'translate3d(' + this.t.translate.x + 'px,' + this.t.translate.y + 'px,' + this.t.translate.z + 'px)';
 				strTransform += ' rotateX(' + this.t.rotate.x + 'deg) rotateY(' + this.t.rotate.y + 'deg) rotateZ(' + this.t.rotate.z + 'deg)';
