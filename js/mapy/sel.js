@@ -1,5 +1,5 @@
 /*
- * DOM Nodes HANDLER
+ * Sel: DOM Nodes HANDLER
  *********************************************/
 
 /*
@@ -21,30 +21,47 @@ var sel = function(selection, context) {
 			}
 
 			this.length = this.elem.length;
+
+			this.id();
+
+			var data = (typeof this.elem[0] !== 'undefined' && typeof document.body.dataset !== 'undefined') ? this.elem[0].dataset : {};
 			this.t = {
 				translate: {
-					x: 0,
-					y: 0,
-					z: 0
+					x: toNumber(data.x),
+					y: toNumber(data.y),
+					z: toNumber(data.z)
 				},
 				rotate: {
-					x: 0,
-					y: 0,
-					z: 0
+					x: toNumber(data.rotateX),
+					y: toNumber(data.rotateY),
+					z: toNumber(data.rotateZ || data.rotate)
 				},
 				scale: {
-					x: 1
+					x: toNumber(data.scale, 1)
 				},
 				centered: false,
 				perspective: 0
 			};
 			return this.transform();
 		},
-		setId: function(str) {
+		id: function(str) {
 			if (this.length > 0) {
-				this.elem[0].id = str;
+				if (typeof str === 'string') {
+					// Set
+					this.elem[0].id = str;
+					return this;
+				} else {
+					// Get
+					var i = this.elem[0].id,
+						idd;
+					if (i === '' || i === undefined || i === null) {
+						idd = this.elem[0].id = 'mapy-' + idCounter++;
+					} else {
+						idd = i;
+					}
+					return idd;
+				}
 			}
-			return this;
 		},
 		node: function() {
 			return this.elem[0];
@@ -84,16 +101,30 @@ var sel = function(selection, context) {
 			return this;
 		},
 		css: function(properties) {
-			var pk;
-			for (k in properties) {
-				pk = cssfix(k);
-				if (pk !== null) {
-					this.each(function(el) {
-						el.style[pk] = properties[k];
-					});
+			if (typeof properties === 'string') {
+				// Get
+				var sty = window.getComputedStyle(this.elem[0]),
+					attr = sty.getPropertyValue(computedCss(properties));
+				if (attr === '' || attr === undefined || attr === null) {
+					attr = sty.getPropertyValue(properties);
+					if (attr === '' || attr === undefined || attr === null) {
+						attr = sty.getPropertyValue(cssfix(properties));
+					}
 				}
+				return attr;
+			} else {
+				// Set
+				var pk;
+				for (k in properties) {
+					pk = cssfix(k);
+					if (pk !== null) {
+						this.each(function(el) {
+							el.style[pk] = properties[k];
+						});
+					}
+				}
+				return this;
 			}
-			return this;
 		},
 		each: function(handler) {
 			for (var i = 0; i < this.length; i++) {
@@ -106,7 +137,9 @@ var sel = function(selection, context) {
 			for (var a in properties) {
 				props = properties[a];
 				for (var b in props) {
-					this.t[a][b] = props[b];
+					if (typeof this.t[a] !== 'undefined') {
+						this.t[a][b] = props[b];
+					}
 				}
 			}
 			var strTransform = (this.t.perspective > 0) ? 'perspective(' + this.t.perspective + 'px) ' : '';
@@ -121,9 +154,11 @@ var sel = function(selection, context) {
 				strTransform += ' rotateX(' + this.t.rotate.x + 'deg) rotateY(' + this.t.rotate.y + 'deg) rotateZ(' + this.t.rotate.z + 'deg)';
 				strTransform += ' scale(' + this.t.scale.x + ')';
 			}
-			this.css({
+			if(mapySupported){
+this.css({
 				'transform': strTransform
 			});
+			}			
 			return this;
 		},
 		width: function() {
@@ -135,6 +170,28 @@ var sel = function(selection, context) {
 		perspective: function(val) {
 			this.t.perspective = val;
 			return this.transform();
+		},
+		hasClass: function(str) {
+			return (classToData(this.elem[0], str).position !== -1);
+		},
+		addClass: function(str) {
+			this.each(function(el) {
+				var dataClass = classToData(el, str);
+				if (dataClass.position === -1) {
+					el.className += ' ' + str;
+				}
+			});
+			return this;
+		},
+		removeClass: function(str) {
+			this.each(function(el) {
+				var dataClass = classToData(el, str);
+				if (dataClass.position !== -1) {
+					dataClass.list.splice(dataClass.position, 1);
+					el.className = dataClass.list.join(' ');
+				}
+			});
+			return this;
 		}
 	};
 

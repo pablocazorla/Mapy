@@ -1,5 +1,5 @@
 // Apps
-var myMapy = mapy();
+var myMapy = Mapy();
 
 
 myMapy.setup([
@@ -9,13 +9,16 @@ myMapy.setup([
 			y: 0,
 			z: 0
 		}
-	}, */{
+	}, */
+	{
+		id: 'azul',
 		translate: {
 			x: 0,
 			y: 0,
 			z: 0
 		}
 	}, {
+		id: 'gris',
 		translate: {
 			x: 600,
 			y: -200,
@@ -26,6 +29,7 @@ myMapy.setup([
 			y: 150
 		}
 	}, {
+		id: 'rojo',
 		translate: {
 			x: 0,
 			y: 270,
@@ -36,6 +40,7 @@ myMapy.setup([
 			z: 15
 		}
 	}, {
+		id: 'verde',
 		translate: {
 			x: 500,
 			y: 270,
@@ -47,17 +52,5 @@ myMapy.setup([
 	}
 ]);
 
-/*
-n = 0;
 
-
-setInterval(function() {
-	myMapy.changeSlide(n);
-	n++;
-	if (n > 2) {
-		n = 0;
-	}
-}, 4000);
-
-console.log(myMapy);
-*/
+//console.log(myMapy.initActions);

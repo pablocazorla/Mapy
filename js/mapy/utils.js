@@ -7,6 +7,7 @@
  * @type {object}
  */
 var dummyStyles = document.createElement('div').style,
+	computedStyles = window.getComputedStyle(document.createElement('div')),
 
 	/* It return right css property name, according to current prefix browser. Also convert the string to camel case
 	 * @type {function} @return {string}
@@ -29,7 +30,7 @@ var dummyStyles = document.createElement('div').style,
 			if (typeof cache[property] === 'undefined') {
 				var camelProperty = toCamel(property),
 					capitalizedProperty = capitalize(camelProperty),
-					prefixedProperties = (camelProperty + ' ' + prefixes.join(capitalizedProperty + ' ') + capitalizedProperty).split(' ');
+					prefixedProperties = (property + ' ' + camelProperty + ' ' + prefixes.join(capitalizedProperty + ' ') + capitalizedProperty).split(' ');
 
 				cache[property] = null;
 				for (var i in prefixedProperties) {
@@ -38,6 +39,29 @@ var dummyStyles = document.createElement('div').style,
 						break;
 					}
 				}
+			}
+			return cache[property];
+		}
+	})(),
+
+	/* It return css property name used to compute styles
+	 * @type {function} @return {string}
+	 */
+	computedCss = (function() {
+		var computedfixes = '-webkit- -moz- -o- -ms-'.split(' '),
+			cache = {};
+		return function(property) {
+			if (typeof cache[property] === 'undefined') {
+				var computedProperties = (property + ' ' + computedfixes.join(property + ' ')).split(' ');
+
+				cache[property] = null;
+				for (var i in computedProperties) {
+					if (computedStyles.getPropertyValue(computedProperties[i]) !== undefined) {
+						cache[property] = computedProperties[i];
+						break;
+					}
+				}
+
 			}
 			return cache[property];
 		}
@@ -52,12 +76,19 @@ var dummyStyles = document.createElement('div').style,
 		for(var i = nl.length; i--; arr.unshift(nl[i]));*/
 		return [].slice.call(nl);
 	},
+	/*
+	 * Return a number from some value
+	 * @type {function} @return {number}
+	 */
+	toNumber = function(num, defaultValue) {
+		return isNaN(parseFloat(num)) ? (defaultValue || 0) : parseFloat(num);
+	},
 
 	/*
 	 * Extend an object with another
 	 * @type {function} @return {object}
 	 */
-	extend = function(destination, source) {
+	extendObject = function(destination, source) {
 		var source = source || {};
 		for (var property in source) {
 			if (source[property] && source[property].constructor && source[property].constructor === Object) {
@@ -74,7 +105,56 @@ var dummyStyles = document.createElement('div').style,
 	 * Counter used only to generate a unique and random id for a node, if necessary
 	 * @type {number}
 	 */
-	idCounter = Math.floor(Math.random() * 99999);
+	idCounter = 0,
+
+	/*
+	 * Location hash handler
+	 * @type {function} @return {string}
+	 */
+	hash = function(str) {
+		if (typeof str === 'string') {
+			window.location.hash = '#' + str;
+			return str;
+		} else {
+			return window.location.hash.slice(1);
+		}
+	},
+
+	/*
+	 * Class List handler handler
+	 * @type {function} @return {string}
+	 */
+	classToData = function(element, classToSearch) {
+		var classList = element.className.split(' '),
+			position = -1;
+		if (classToSearch) {
+			for (var i = 0; i < classList.length; i++) {
+				if (classList[i] === classToSearch) {
+					position = i;
+				}
+			}
+		}
+		return {
+			list: classList,
+			position: position
+		}
+	},
+
+	/*
+	 * Browser support for Mapy
+	 * @type {boolean}
+	 */
+	mapySupported = (cssfix("perspective") !== null),
+
+	/*
+	 * Console log
+	 * @type {function} @return {null}
+	 */
+	cons = function(str) {
+		try {
+			console.log(str);
+		} catch (e) {};
+	};
 
 /*
  * Event handler
