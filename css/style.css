@@ -1,10 +1,62 @@
 body{font: 14px/1.3em sans-serif;}
-
-
-
 .mapy{
 	position:fixed;top:10px;left: 10px;right: 10px;bottom: 10px;
 	background-color: #EEE;border: solid 1px #BBB;overflow: hidden
 }
-
 .slide{opacity: .4}
+
+/* EDITOR ***********************************************/
+
+
+.mapy-editor{
+	position: absolute;top: 5px;right: 5px;z-index: 10000;
+	font: 10px/1.3em sans-serif;text-align: center;width:70px;padding: 0;margin: 0;
+	background-color: #FFF;
+	color:#666;
+	border: solid 1px #AAA;
+	border-radius:4px;
+}
+
+
+
+.mapy-editor-btn{
+	font-size: 11px;
+	line-height: 24px;
+	font-weight: bold;	
+	cursor: pointer;
+	color:#AAA;
+	padding: 0;margin: 0;
+}
+.mapy-editor-btn:hover{
+	color:#666;
+}
+
+
+
+.mapy-editor-tools{
+	xdisplay:none;
+	padding: 0;margin: 0;
+	
+
+}
+.mapy-editor-tools-btn{
+	display: block;
+	border-top:solid 1px #CCC;
+	padding:40px 0 5px;
+	cursor: pointer;
+}
+.mapy-editor-tools-btn:hover{
+	background-color:#aef;
+	color:#000;
+}
+.mapy-editor-tools-btn.active{
+	background-color:#def;
+}
+
+.mapy-editor-tools-separator{
+	background-color:#CCC;padding:0;margin: 0;height: 5px;
+}
+
+.mapy-editor-tools-btn.to-pan{}
+.mapy-editor-tools-btn.to-rotate{}
+.mapy-editor-tools-btn.to-setup{}
