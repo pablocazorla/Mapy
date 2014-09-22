@@ -1,56 +1,50 @@
-// Apps
-var myMapy = Mapy();
-
-
-myMapy.setup([
-	/*{
-		translate: {
-			x: 0,
-			y: 0,
-			z: 0
-		}
-	}, */
-	{
-		id: 'azul',
-		translate: {
-			x: 0,
-			y: -400,
-			z: 0
-		}
-	}, {
-		id: 'gris',
-		translate: {
-			x: 600,
-			y: -200,
-			z: 0
-		},
-		rotate: {
-			x: -20,
-			y: 150
-		}
-	}, {
-		id: 'rojo',
-		translate: {
-			x: 0,
-			y: 270,
-			z: 0
-		},
-		rotate: {
-			x: 45,
-			z: 15
-		}
-	}, {
-		id: 'verde',
-		translate: {
-			x: 500,
-			y: 270,
-			z: 0
-		},
-		rotate: {
-			z: 90
-		}
+Mapy().setup([{
+	id: "rojo",
+	translate: {
+		x: 978,
+		y: 353
+	},
+	rotate: {
+		z: -27
+	},
+	scale: {
+		x: 1.48
 	}
-]);
-
-
-//console.log(myMapy.initActions);
+},
+{
+	id: "azul",
+	translate: {
+		x: -69,
+		y: -379
+	},
+	rotate: {
+		y: 60
+	}
+},
+{
+	id: "verde",
+	translate: {
+		x: -715,
+		y: 332
+	},
+	rotate: {
+		z: -72
+	}
+},
+{
+	id: "gris",
+	translate: {
+		x: 273,
+		y: 360
+	},
+	rotate: {
+		z: 57
+	}
+},
+{
+	id: "naranja",
+	translate: {
+		x: 300,
+		y: -300
+	}
+}]);

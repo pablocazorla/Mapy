@@ -6,134 +6,58 @@ body{font: 14px/1.3em sans-serif;}
 .slide{opacity: .4}
 
 /* EDITOR ***********************************************/
-
-
-.mapy-editor{
-	position: absolute;top: 5px;right: 5px;z-index: 10000;
-	font: 10px/1.3em sans-serif;text-align: center;width:70px;padding: 0;margin: 0;
-	background-color: #FFF;
-	color:#666;
-	border: solid 1px #AAA;
-	border-radius:4px;
-}
-
-
-
-.mapy-editor-btn{
-	font-size: 11px;
-	line-height: 24px;
-	font-weight: bold;	
-	cursor: pointer;
-	color:#AAA;
-	padding: 0;margin: 0;
-}
-.mapy-editor-btn:hover{
-	color:#666;
-}
-
-
-
-.mapy-editor-tools{
-	xdisplay:none;
-	padding: 0;margin: 0;
-	
-
-}
-.mapy-editor-tools-btn{
-	display: block;
-	border-top:solid 1px #CCC;
-	padding:40px 0 5px;
-	cursor: pointer;
-}
-.mapy-editor-tools-btn:hover{
-	background-color:#aef;
-	color:#000;
-}
-.mapy-editor-tools-btn.active{
-	background-color:#def;
-}
-
-.mapy-editor-tools-separator{
-	background-color:#CCC;padding:0;margin: 0;height: 5px;
-}
-
-.mapy-editor-tools-btn.to-pan{}
-.mapy-editor-tools-btn.to-rotate{}
-.mapy-editor-tools-btn.to-setup{}
-
-
-.mapy-editor-grid{position:absolute;top: -1500px;left: -1500px;width: 3000px;height: 3000px;background: url('mapy-grid.png');
-border-bottom:solid 1px #808080;border-right:solid 1px #808080; }
-
-.mapy-editor-grid-x{position:absolute;top: 1499px;left: 0;width: 3000px;height: 2px;background-color:#F00;}
-.mapy-editor-grid-y{position:absolute;left: 1499px;top: 0;height: 3000px;width: 2px;background-color:#0B0;}
-
-
+/*
+.mapy-editor{position: absolute;top: 5px;right: 5px;z-index: 10000;font: 10px/1.3em sans-serif;text-align: center;width:70px;padding: 0;margin: 0;background-color: #FFF;color:#666;border: solid 1px #AAA;border-radius:4px}
+.mapy-editor-btn{font-size: 11px;line-height: 24px;font-weight: bold;cursor: pointer;color:#AAA;padding: 0;margin: 0}
+.mapy-editor-btn:hover{color:#666}
+.mapy-editor-tools{padding: 0;margin: 0}
+.mapy-editor-tools-btn{display: block;border-top:solid 1px #CCC;padding:40px 0 5px;cursor: pointer}
+.mapy-editor-tools-btn:hover{background-color:#aef;color:#000}
+.mapy-editor-tools-btn.active{background-color:#def}
+.mapy-editor-tools-separator{background-color:#CCC;padding:0;margin: 0;height: 5px}
+.mapy-editor-tools-btn.to-pan,
+.mapy-editor-tools-btn.to-rotate,
+.mapy-editor-tools-btn.to-reset,
+.mapy-editor-tools-btn.to-prev,
+.mapy-editor-tools-btn.to-next,
+.mapy-editor-tools-btn.to-setup{background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAFcCAYAAADWPK4LAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6Qzk1OUUwNjU0MkEwMTFFNDgwRDNGOENGMzk4NjVCNzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6Qzk1OUUwNjY0MkEwMTFFNDgwRDNGOENGMzk4NjVCNzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpDOTU5RTA2MzQyQTAxMUU0ODBEM0Y4Q0YzOTg2NUI3MiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpDOTU5RTA2NDQyQTAxMUU0ODBEM0Y4Q0YzOTg2NUI3MiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgJoJWQAAAgjSURBVHja7J15bBVV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);background-repeat: no-repeat}
+.mapy-editor-tools-btn.to-pan{background-position: center 14px}
+.mapy-editor-tools-btn.to-rotate{background-position: center -49px}
+.mapy-editor-tools-btn.to-reset{background-position: center -113px}
+.mapy-editor-tools-btn.to-prev{background-position: center -178px}
+.mapy-editor-tools-btn.to-next{background-position: center -244px}
+.mapy-editor-tools-btn.to-setup{background-position: center -313px}
+.mapy-editor-grid{position:absolute;top: -1500px;left: -1500px;width: 3000px;height: 3000px;background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RDY3ODc3RTI0MUU3MTFFNEFDNUNCNkU3Qzg3QUM0NzUiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RDY3ODc3RTM0MUU3MTFFNEFDNUNCNkU3Qzg3QUM0NzUiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpENjc4NzdFMDQxRTcxMUU0QUM1Q0I2RTdDODdBQzQ3NSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpENjc4NzdFMTQxRTcxMUU0QUM1Q0I2RTdDODdBQzQ3NSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Puqs/UUAAAC0SURBVHja7NGxDQAgCEVBMe4Nm2tj4wQac68htP+iqmbTM419wxR3yszj7yZ5KyBABASIgAARECACAkRABASIgAARECACAkRABASIgAARECACAkRABASIgAARECACAkRABASIgAARECACAkRABASIgAARECACAkRABASIgAARECACAkRABASIgAARECACAkRABASIgAARECACAkRABASIgAARECACAkRAgAiIgAARkC9aAgwASRcEx0NS/QcAAAAASUVORK5CYII=);border-bottom:solid 1px #808080;border-right:solid 1px #808080}
+.mapy-editor-grid-x{position:absolute;top: 1499px;left: 0;width: 3000px;height: 2px;background-color:#F00}
+.mapy-editor-grid-y{position:absolute;left: 1499px;top: 0;height: 3000px;width: 2px;background-color:#0B0}
 .mapy-editor-cursor{position:absolute;top: 0;left: 0;z-index: 11000}
-.mapy-editor-cursor:not(.edit):hover div{opacity:.4;}
-
-.mapy-editor-cursor-circ-x,
-.mapy-editor-cursor-circ-y,
-.mapy-editor-cursor-circ-z{
-	position:absolute;top: -114px;left: -114px;
-	width: 200px;height:200px;border-style: solid;border-width: 14px;
-	border-radius: 150px;
-}
-.mapy-editor-cursor-circ-x{border-color: #F00;}
-.mapy-editor-cursor-circ-y{border-color: #0B0;}
-.mapy-editor-cursor-circ-z{border-color: #00F;}
-
+.mapy-editor-cursor:not(.edit):hover div{opacity:.4}
+.mapy-editor-cursor-circ-x,.mapy-editor-cursor-circ-y,.mapy-editor-cursor-circ-z{position:absolute;top: -114px;left: -114px;width: 200px;height:200px;border-style: solid;border-width: 14px;border-radius: 150px}
+.mapy-editor-cursor-circ-x{border-color: #F00}
+.mapy-editor-cursor-circ-y{border-color: #0B0}
+.mapy-editor-cursor-circ-z{border-color: #00F}
 .mapy-editor-cursor-line-x,
 .mapy-editor-cursor-line-y,
-.mapy-editor-cursor-line-z{
-	position:absolute;top: -7px;left: -200px;width:400px;height:14px;border-radius: 10px;
-}
+.mapy-editor-cursor-line-z{position:absolute;top: -7px;left: -200px;width:400px;height:14px;border-radius: 10px}
 .mapy-editor-cursor-line-x span,
 .mapy-editor-cursor-line-y span,
-.mapy-editor-cursor-line-z span{
-	position:absolute;top: -17px;left: 10px;
-}
+.mapy-editor-cursor-line-z span{position:absolute;top: -17px;left: 10px}
 .mapy-editor-cursor-line-x{background-color: #F00}
 .mapy-editor-cursor-line-y{background-color: #0B0}
 .mapy-editor-cursor-line-z{background-color: #00F}
-
-
-
-.mapy-editor-cursor-scale{position: absolute;top:-30px;left: -30px;width: 60px;height: 60px;
-	background-color: #D90;border-radius:40px; opacity: .7;border:solid 2px #960;
-}
-
+.mapy-editor-cursor-scale{position: absolute;top:-30px;left: -30px;width: 60px;height: 60px;background-color: #D90;border-radius:40px; opacity: .7;border:solid 2px #960}
 .mapy-editor-cursor-reset{position: absolute;top: 110px;left: 110px;padding:0 5px;background-color: #FFF;font-size: 12px;line-height: 20px;
-border: solid 2px #BBB;border-radius: 10px;cursor:pointer;}
-
-
-.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-circ-x:hover,
-.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-circ-y:hover,
-.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-circ-z:hover{opacity:1;border-color: #DD0;}
-.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-line-x:hover,
-.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-line-y:hover,
-.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-line-z:hover,
-.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-scale:hover,
+border: solid 2px #BBB;border-radius: 10px;cursor:pointer}
+.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-circ-x:hover,.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-circ-y:hover,
+.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-circ-z:hover{opacity:1;border-color: #DD0}
+.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-line-x:hover,.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-line-y:hover,
+.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-line-z:hover,.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-scale:hover,
 .mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-reset:hover{opacity:1;background-color: #DD0}
-
-
-
-
-.mapy-editor-cursor-line-x.active,
-.mapy-editor-cursor-line-y.active,
-.mapy-editor-cursor-line-z.active{background-color: #DD0}
-
-.mapy-editor-cursor-circ-x.active,
-.mapy-editor-cursor-circ-y.active,
-.mapy-editor-cursor-circ-z.active{border-color: #DD0;}
-
-
-
-
-.mapy-on-edition .active-edition{box-shadow: 0 0 5px 10px rgba(0,20,200,1), inset 0 0 2px 4px rgba(255,255,255,.5);}
-
-.mapy-editor-cursor-indicator{
-	position: absolute;padding:5px 10px;font-size:11px;line-height: 12px;margin:-40px 0 0 -10px;background-color: #FFF;
-	border:#BBB solid 1px; border-radius:4px;text-align: center; box-shadow:0 1px 3px rgba(0,0,0,.2);
-}
-
+.mapy-editor-cursor-line-x.active,.mapy-editor-cursor-line-y.active,.mapy-editor-cursor-line-z.active{background-color: #DD0}
+.mapy-editor-cursor-circ-x.active,.mapy-editor-cursor-circ-y.active,.mapy-editor-cursor-circ-z.active{border-color: #DD0}
+.mapy-on-edition .active-edition{box-shadow: 0 0 5px 10px rgba(0,20,200,1), inset 0 0 2px 4px rgba(255,255,255,.5)}
+.mapy-editor-cursor-indicator{position: absolute;padding:5px 10px;font-size:11px;line-height: 12px;margin:-40px 0 0 -10px;background-color: #FFF;border:#BBB solid 1px; border-radius:4px;text-align: center; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.mapy-editor-output{position: absolute;top: 4px;bottom: 4px;right: 4px;z-index: 12000;width:350px;padding:10px;border:solid 1px #BBB;background-color: #FFF}
+.mapy-editor-output pre{position: absolute;top: 60px;bottom: 10px;left: 10px;right: 10px;background-color: #EEE;border:solid 1px #BBB;overflow-y:scroll}
+.mapy-editor-output-close{width:20px;height: 20px;position: absolute;top:4px;right:4px;cursor:pointer;color:#999;font: 20px/20px sans-serif}
+.mapy-editor-output-close:hover{color:#333}*/
