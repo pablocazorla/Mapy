@@ -332,15 +332,15 @@
 				}
 				var strTransform = (this.t.perspective > 0) ? 'perspective(' + this.t.perspective + 'px) ' : '';
 				if (rev) {
-					strTransform += ' scale(' + this.t.scale.x + ')';
-					strTransform += ' rotateZ(' + this.t.rotate.z + 'deg) rotateY(' + this.t.rotate.y + 'deg) rotateX(' + this.t.rotate.x + 'deg)';
-					strTransform += 'translate3d(' + this.t.translate.x + 'px,' + this.t.translate.y + 'px,' + this.t.translate.z + 'px)';
+					strTransform += (this.t.scale.x === 1) ? '' : ' scale(' + this.t.scale.x + ')';
+					strTransform += (this.t.rotate.z === 0 && this.t.rotate.y === 0 && this.t.rotate.x === 0) ? '' : ' rotateZ(' + this.t.rotate.z + 'deg) rotateY(' + this.t.rotate.y + 'deg) rotateX(' + this.t.rotate.x + 'deg)';
+					strTransform += (this.t.translate.x === 0 && this.t.translate.y === 0 && this.t.translate.z === 0) ? '' : 'translate3d(' + this.t.translate.x + 'px,' + this.t.translate.y + 'px,' + this.t.translate.z + 'px)';
 					strTransform += (this.t.centered) ? 'translate(-50%,-50%) ' : '';
 				} else {
 					strTransform += (this.t.centered) ? 'translate(-50%,-50%) ' : '';
-					strTransform += 'translate3d(' + this.t.translate.x + 'px,' + this.t.translate.y + 'px,' + this.t.translate.z + 'px)';
-					strTransform += ' rotateX(' + this.t.rotate.x + 'deg) rotateY(' + this.t.rotate.y + 'deg) rotateZ(' + this.t.rotate.z + 'deg)';
-					strTransform += ' scale(' + this.t.scale.x + ')';
+					strTransform += (this.t.translate.x === 0 && this.t.translate.y === 0 && this.t.translate.z === 0) ? '' : 'translate3d(' + this.t.translate.x + 'px,' + this.t.translate.y + 'px,' + this.t.translate.z + 'px)';
+					strTransform += (this.t.rotate.x === 0 && this.t.rotate.y === 0 && this.t.rotate.z === 0) ? '' : ' rotateX(' + this.t.rotate.x + 'deg) rotateY(' + this.t.rotate.y + 'deg) rotateZ(' + this.t.rotate.z + 'deg)';
+					strTransform += (this.t.scale.x === 1) ? '' : ' scale(' + this.t.scale.x + ')';
 				}
 				if (mapySupported) {
 					this.css({

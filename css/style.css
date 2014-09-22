@@ -97,12 +97,27 @@ border-bottom:solid 1px #808080;border-right:solid 1px #808080; }
 .mapy-editor-cursor-line-y{background-color: #0B0}
 .mapy-editor-cursor-line-z{background-color: #00F}
 
+
+
+.mapy-editor-cursor-scale{position: absolute;top:-30px;left: -30px;width: 60px;height: 60px;
+	background-color: #D90;border-radius:40px; opacity: .7;border:solid 2px #960;
+}
+
+.mapy-editor-cursor-reset{position: absolute;top: 110px;left: 110px;padding:0 5px;background-color: #FFF;font-size: 12px;line-height: 20px;
+border: solid 2px #BBB;border-radius: 10px;cursor:pointer;}
+
+
 .mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-circ-x:hover,
 .mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-circ-y:hover,
 .mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-circ-z:hover{opacity:1;border-color: #DD0;}
 .mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-line-x:hover,
 .mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-line-y:hover,
-.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-line-z:hover{opacity:1;background-color: #DD0}
+.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-line-z:hover,
+.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-scale:hover,
+.mapy-editor-cursor:not(.edit):hover div.mapy-editor-cursor-reset:hover{opacity:1;background-color: #DD0}
+
+
+
 
 .mapy-editor-cursor-line-x.active,
 .mapy-editor-cursor-line-y.active,
@@ -113,5 +128,12 @@ border-bottom:solid 1px #808080;border-right:solid 1px #808080; }
 .mapy-editor-cursor-circ-z.active{border-color: #DD0;}
 
 
+
+
 .mapy-on-edition .active-edition{box-shadow: 0 0 5px 10px rgba(0,20,200,1), inset 0 0 2px 4px rgba(255,255,255,.5);}
+
+.mapy-editor-cursor-indicator{
+	position: absolute;padding:5px 10px;font-size:11px;line-height: 12px;margin:-40px 0 0 -10px;background-color: #FFF;
+	border:#BBB solid 1px; border-radius:4px;text-align: center; box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
 

@@ -27,7 +27,11 @@
 			$cursor_circZ = box('mapy-editor-cursor-circ-z', $cursor, ''),
 			$cursor_lineX = box('mapy-editor-cursor-line-x', $cursor, '<span>X</span>'),
 			$cursor_lineY = box('mapy-editor-cursor-line-y', $cursor, '<span>Y</span>'),
-			$cursor_lineZ = box('mapy-editor-cursor-line-z', $cursor, '<span>Z</span>');
+			$cursor_lineZ = box('mapy-editor-cursor-line-z', $cursor, '<span>Z</span>'),
+			$cursor_scale = box('mapy-editor-cursor-scale', $cursor, ''),
+			$cursor_reset = box('mapy-editor-cursor-reset', $cursor, 'Reset'),
+			$cursor_indicator = box('mapy-editor-cursor-indicator', this.$container, '<b>X : </b>45');
+
 
 		$cursor.css({
 			'transform-style': 'preserve-3d'
@@ -142,7 +146,7 @@
 				y: 0
 			},
 			activeCursor = null,
-			posX, posY, posZ, rotX, rotY, rotZ,
+			posX, posY, posZ, rotX, rotY, rotZ, scaleX,
 
 			onMouseDown = function(e) {
 				if (!dragging && editMode) {
@@ -167,6 +171,8 @@
 					rotX = self.slideList[activeEdit].t.rotate.x;
 					rotY = self.slideList[activeEdit].t.rotate.y;
 					rotZ = self.slideList[activeEdit].t.rotate.z;
+					scaleX = self.slideList[activeEdit].t.scale.x;
+
 
 				}
 			},
@@ -189,25 +195,39 @@
 							dposZ = posZ,
 							drotX = rotX,
 							drotY = rotY,
-							drotZ = rotZ;
+							drotZ = rotZ,
+							dscaleX = scaleX,
+							indicatorContent;
 						switch (activeCursor) {
 							case 'lineX':
-								dposX = posX + Math.sqrt(dx * dx + dy * dy) * dx / Math.abs(dx) / newZoom;
+								dposX = u.toNumber(Math.round(posX + Math.sqrt(dx * dx + dy * dy) * dx / Math.abs(dx) / newZoom));
+								indicatorContent = '<b>X : </b>' + dposX + 'px';
 								break;
 							case 'lineY':
-								dposY = posY + Math.sqrt(dx * dx + dy * dy) * dy / Math.abs(dy) / newZoom;
+								dposY = u.toNumber(Math.round(posY + Math.sqrt(dx * dx + dy * dy) * dy / Math.abs(dy) / newZoom));
+								indicatorContent = '<b>Y : </b>' + dposY + 'px';
 								break;
 							case 'lineZ':
-								dposZ = posZ + Math.sqrt(dx * dx + dy * dy) * dy / Math.abs(dy) / newZoom;
+								dposZ = u.toNumber(Math.round(posZ + Math.sqrt(dx * dx + dy * dy) * dy / Math.abs(dy) / newZoom));
+								indicatorContent = '<b>Z : </b>' + dposZ + 'px';
 								break;
 							case 'circX':
-								drotX = rotX + 0.2 * Math.sqrt(dx * dx + dy * dy) * dy / Math.abs(dy) / newZoom;
+								drotX = u.toNumber(Math.round(rotX + 0.2 * Math.sqrt(dx * dx + dy * dy) * dy / Math.abs(dy) / newZoom));
+								indicatorContent = '<b>rotX : </b>' + drotX + '°';
 								break;
 							case 'circY':
-								drotY = rotY + 0.2 * Math.sqrt(dx * dx + dy * dy) * dy / Math.abs(dy) / newZoom;
+								drotY = u.toNumber(Math.round(rotY + 0.2 * Math.sqrt(dx * dx + dy * dy) * dy / Math.abs(dy) / newZoom));
+								indicatorContent = '<b>rotY : </b>' + drotY + '°';
 								break;
 							case 'circZ':
-								drotZ = rotZ + 0.2 * Math.sqrt(dx * dx + dy * dy) * dy / Math.abs(dy) / newZoom;
+								drotZ = u.toNumber(Math.round(rotZ + 0.2 * Math.sqrt(dx * dx + dy * dy) * dy / Math.abs(dy) / newZoom));
+								indicatorContent = '<b>rotZ : </b>' + drotZ + '°';
+								break;
+							case 'scale':
+								dscaleX = u.toNumber(0.01 * Math.floor(100 * (scaleX + 0.01 * Math.sqrt(dx * dx + dy * dy) * dy / Math.abs(dy) / newZoom)), 1);
+								dscaleX = (dscaleX < 0.05) ? 0.05 : dscaleX;
+								dscaleX = (dscaleX > 12) ? 12 : dscaleX;
+								indicatorContent = '<b>Scale : </b>' + dscaleX;
 								break;
 						}
 						var objTrans = {
@@ -220,6 +240,9 @@
 								x: drotX,
 								y: drotY,
 								z: drotZ
+							},
+							scale: {
+								x: dscaleX
 							}
 						};
 						$cursor.transform({
@@ -230,12 +253,19 @@
 							}
 						});
 						self.slideList[activeEdit].transform(objTrans);
+						var rect = self.$container.node().getBoundingClientRect();
+						$cursor_indicator.html(indicatorContent).css({
+							'top': e.pageY - rect.top + 'px',
+							'left': e.pageX - rect.left + 'px',
+							'display': 'block'
+						});
 					}
 				}
 			},
 			onMouseUp = function() {
 				if (dragging) {
 					dragging = false;
+					$cursor_indicator.hide();
 				}
 			},
 			zoomScale = 0.6,
@@ -253,6 +283,38 @@
 					newZoom = (newZoom > 5) ? 5 : newZoom;
 					self.setZoom(newZoom);
 				}
+			},
+			getSetup = function() {
+				var txt = '[',
+					t;
+				for (var i = 0; i < self.length;i++) {
+					txt += '{';
+					t = self.slideList[i].t;
+					if (t.translate.x !== 0 || t.translate.y !== 0 || t.translate.z !== 0) {
+						txt += '\n\ttranslate: {';
+						txt += (t.translate.x !== 0) ? '\n\t\tx: ' + t.translate.x+',' : '';
+						txt += (t.translate.y !== 0) ? '\n\t\ty: ' + t.translate.y+',' : '';
+						txt += (t.translate.z !== 0) ? '\n\t\tz: ' + t.translate.z : '';
+						txt += '\n\t},';
+					}
+					if (t.rotate.x !== 0 || t.rotate.y !== 0 || t.rotate.z !== 0) {
+						txt += '\n\trotate: {';
+						txt += (t.rotate.x !== 0) ? '\n\t\tx: ' + t.rotate.x+',' : '';
+						txt += (t.rotate.y !== 0) ? '\n\t\ty: ' + t.rotate.y+',' : '';
+						txt += (t.rotate.z !== 0) ? '\n\t\tz: ' + t.rotate.z : '';
+						txt += '\n\t},';
+					}
+					if (t.scale.x !== 1) {
+						txt += '\n\tscale: {\n\t\tx: ' + t.scale.x + '\n\t}';
+					}
+
+					txt += '\n},\n';
+				}
+				txt += ']';
+				txt = txt.replace(/,}/g,'}');
+				txt = txt.replace(/,\n]/g,']');
+
+				console.log(txt);
 			};
 
 
@@ -300,6 +362,9 @@
 				num = 0;
 			}
 			setActive(num);
+		});
+		u.on($btnGetSetup.node(), 'click', function() {
+			getSetup();
 		});
 
 
@@ -358,6 +423,36 @@
 			$cursor_circZ.addClass('active');
 			$cursor.addClass('edit');
 		});
+		u.on($cursor_scale.node(), 'mousedown', function(e) {
+			activeCursor = 'scale';
+			$cursor_scale.addClass('active');
+			$cursor.addClass('edit');
+		});
+		u.on($cursor_reset.node(), 'click', function(e) {
+			$cursor.transform({
+				translate: {
+					x: 0,
+					y: 0,
+					z: 0
+				}
+			});
+			self.slideList[activeEdit].transform({
+				translate: {
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				rotate: {
+					x: 0,
+					y: 0,
+					z: 0
+				},
+				scale: {
+					x: 1
+				}
+			});
+		});
+
 
 
 		u.on(window, 'mouseup', function() {
@@ -369,6 +464,7 @@
 				$cursor_lineX.removeClass('active');
 				$cursor_lineY.removeClass('active');
 				$cursor_lineZ.removeClass('active');
+				$cursor_scale.removeClass('active');
 				$cursor.removeClass('edit');
 			}
 		});
