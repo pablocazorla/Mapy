@@ -391,25 +391,25 @@
 					return this.elem[0].innerHTML;
 				}
 			},
-			attr : function(str, val){
+			attr: function(str, val) {
 				if (typeof val === 'string') {
 					this.each(function(el) {
-						el.setAttribute(str,val);
+						el.setAttribute(str, val);
 					});
 					return this;
 				} else {
 					return this.elem[0].getAttribute(str);
 				}
 			},
-			show : function(){
+			show: function() {
 				this.css({
-					'display' : 'block'
+					'display': 'block'
 				});
 				return this;
 			},
-			hide : function(){
+			hide: function() {
 				this.css({
-					'display' : 'none'
+					'display': 'none'
 				});
 				return this;
 			}
@@ -645,14 +645,18 @@
 
 			return this;
 		},
-		setZoom: function() {
-			var slide = (this.current === -1) ? this.panorama : this.slideList[this.current];
-
-			var width = slide.width(),
-				height = slide.height(),
-				mod = width / height,
-				scale = slide.t.scale.x,
+		setZoom: function(zoomOption) {
+			var zoom;
+			if (typeof zoomOption !== 'undefined') {
+				zoom = zoomOption;
+			} else {
+				var slide = (this.current === -1) ? this.panorama : this.slideList[this.current];
+				var width = slide.width(),
+					height = slide.height(),
+					mod = width / height,
+					scale = slide.t.scale.x;
 				zoom = (this.mod > mod) ? this.height / height / scale : this.width / width / scale;
+			}
 
 			this.$scaler.perspective(this.config.perspective / zoom).transform({
 				scale: {
@@ -662,29 +666,45 @@
 
 			return this;
 		},
-		setPosition: function() {
-			var slide = (this.current === -1) ? this.panorama : this.slideList[this.current];
+		setPosition: function(options) {
 
-			var xt = -1 * slide.t.translate.x,
-				yt = -1 * slide.t.translate.y,
-				zt = -1 * slide.t.translate.z,
-				xr = -1 * slide.t.rotate.x,
-				yr = -1 * slide.t.rotate.y,
-				zr = -1 * slide.t.rotate.z;
-
-			this.$moveRotater.transform({
-				translate: {
-					x: xt,
-					y: yt,
-					z: zt
-				},
-				rotate: {
-					x: xr,
-					y: yr,
-					z: zr
+			if (typeof options !== 'undefined') {
+				if (options.mode === 'translate') {
+					this.$moveRotater.transform({
+						translate: {
+							x: options.x,
+							y: options.y
+						}
+					}, true);
+				} else {
+					this.$moveRotater.transform({
+						rotate: {
+							z: options.z,
+							x: options.x
+						}
+					}, true);
 				}
-			}, true);
-
+			} else {
+				var slide = (this.current === -1) ? this.panorama : this.slideList[this.current];
+				var xt = -1 * slide.t.translate.x,
+					yt = -1 * slide.t.translate.y,
+					zt = -1 * slide.t.translate.z,
+					xr = -1 * slide.t.rotate.x,
+					yr = -1 * slide.t.rotate.y,
+					zr = -1 * slide.t.rotate.z;
+				this.$moveRotater.transform({
+					translate: {
+						x: xt,
+						y: yt,
+						z: zt
+					},
+					rotate: {
+						x: xr,
+						y: yr,
+						z: zr
+					}
+				}, true);
+			}
 			return this;
 		},
 		setEvents: function(self) {
