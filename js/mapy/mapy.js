@@ -280,6 +280,27 @@
 				}
 				return this;
 			},
+			prepend: function(el) {
+				if (typeof el.mapySelector !== 'undefined') {
+					var self = this;
+					el.each(function(e) {
+						var first = self.elem[0].firstChild;
+						if (first) {
+							self.elem[0].insertBefore(e, first);
+						} else {
+							self.elem[0].appendChild(e);
+						}
+					});
+				} else {
+					var first = self.elem[0].firstChild;
+					if (first) {
+						self.elem[0].insertBefore(e, first);
+					} else {
+						self.elem[0].appendChild(e);
+					}
+				}
+				return this;
+			},
 			appendTo: function(el) {
 				if (typeof el.mapySelector !== 'undefined') {
 					el.append(this);
@@ -422,6 +443,22 @@
 	 * MAPY
 	 *********************************************/
 
+	/* Custom events */
+	var startChange = new CustomEvent(
+			"startChange", {
+				from: null,
+				to: null,
+				bubbles: true,
+				cancelable: true
+			}),
+		finishChange = new CustomEvent(
+			"finishChange", {
+				from: null,
+				to: null,
+				bubbles: true,
+				cancelable: true
+			});
+
 	/*
 	 * Constructor
 	 * @type {function} @return {object}
@@ -436,9 +473,9 @@
 		 * @type {object}
 		 */
 		nullMapy = {
-			changeSlide: function() {},
-			prevSlide: function() {},
-			nextSlide: function() {},
+			changeStep: function() {},
+			prevStep: function() {},
+			nextStep: function() {},
 			setup: function() {},
 			slide: function() {}
 		};
@@ -514,6 +551,17 @@
 					// Array of slides used to setup, navigate between slides, etc.
 					this.slideList = this.$slides.toArray();
 					this.length = this.slideList.length;
+					this.stepList = [];
+					for (var i = 0; i < this.length; i++) {
+						if (this.slideList[i].hasClass('step')) {
+							this.stepList.push(this.slideList[i]);
+						}
+					}
+					this.stepLength = this.stepList.length;
+					if (this.stepLength === 0) {
+						this.stepList = this.slideList;
+						this.stepLength = this.length;
+					}
 
 					// New node elements, to manage the visualization
 					this.$scaler = utils.sel(document.createElement('div'));
@@ -561,7 +609,7 @@
 					 **************************************/
 
 					// Current slide showing. To init: config.initial or hash indication
-					var idxHash = this.getIndexById(utils.hash().split('-')[0]);
+					var idxHash = this.getIndexById(utils.hash().split('-')[0], true);
 					this.current = (idxHash !== null) ? idxHash - 1 : this.config.initial - 1;
 
 					// Set width and height of container, depending of window size
@@ -601,48 +649,62 @@
 			this.mod = this.width / this.height;
 			return this;
 		},
-		changeSlide: function(num, callback) {
+		changeStep: function(num, onStart, onFinish) {
 			if (!this.animating && this.current !== num && !this.disable) {
-				var cbk = callback || function() {},
-					self = this;
+				var self = this;
+				startChange.from = this.current;
+				finishChange.from = this.current;
+
+				startChange.to = num;
+				finishChange.to = num;
+
+				self.$container.node().dispatchEvent(startChange);
 
 				this.current = num;
 				this.animating = true;
 				this.setZoom().setPosition();
 				if (this.current >= 0) {
-					utils.hash(this.slideList[this.current].id() + '-slide');
+					utils.hash(this.stepList[this.current].id() + '-slide');
 				} else {
 					utils.hash('');
 				}
 
+
 				setTimeout(function() {
 					self.animating = false;
-					cbk();
+					self.$container.node().dispatchEvent(finishChange);
 				}, this.config.duration);
 			}
 			return this;
 		},
-		prevSlide: function(onFinish) {
+		prevStep: function(onStart, onFinish) {
 			var num = this.current - 1;
 			if (num < -1) {
 				if (this.config.circular) {
-					this.changeSlide(this.length - 1, onFinish);
+					this.changeStep(this.stepLength - 1, onStart, onFinish);
 				}
 			} else {
-				this.changeSlide(num, onFinish);
+				this.changeStep(num, onStart, onFinish);
 			}
 			return this;
 		},
-		nextSlide: function(onFinish) {
+		nextStep: function(onStart, onFinish) {
 			var num = this.current + 1;
-			if (num >= this.length) {
+			if (num >= this.stepLength) {
 				if (this.config.circular) {
-					this.changeSlide(-1);
+					this.changeStep(-1, onStart, onFinish);
 				}
 			} else {
-				this.changeSlide(num, onFinish);
+				this.changeStep(num, onStart, onFinish);
 			}
 
+			return this;
+		},
+		gotoStep: function(num, onStart, onFinish) {
+			var n = utils.toNumber(num, -99);
+			if (n >= -1 && n < this.stepLength) {
+				this.changeStep(n, onStart, onFinish);
+			}
 			return this;
 		},
 		setZoom: function(zoomOption) {
@@ -650,7 +712,7 @@
 			if (typeof zoomOption !== 'undefined') {
 				zoom = zoomOption;
 			} else {
-				var slide = (this.current === -1) ? this.panorama : this.slideList[this.current];
+				var slide = (this.current === -1) ? this.panorama : this.stepList[this.current];
 				var width = slide.width(),
 					height = slide.height(),
 					mod = width / height,
@@ -685,7 +747,7 @@
 					}, true);
 				}
 			} else {
-				var slide = (this.current === -1) ? this.panorama : this.slideList[this.current];
+				var slide = (this.current === -1) ? this.panorama : this.stepList[this.current];
 				var xt = -1 * slide.t.translate.x,
 					yt = -1 * slide.t.translate.y,
 					zt = -1 * slide.t.translate.z,
@@ -713,18 +775,32 @@
 			});
 
 			utils.onKeyPress(window, 37, function() {
-				self.prevSlide();
+				self.prevStep();
 			});
 			utils.onKeyPress(window, 38, function() {
-				self.prevSlide();
+				self.prevStep();
 			});
 			utils.onKeyPress(window, 39, function() {
-				self.nextSlide();
+				self.nextStep();
 			});
 			utils.onKeyPress(window, 40, function() {
-				self.nextSlide();
+				self.nextStep();
 			});
 
+			for (var i = 0; i < this.stepLength; i++) {
+				this.stepList[i].node().setAttribute('data-mapystep', i);
+				utils.on(this.stepList[i].node(), 'click', function() {
+					self.gotoStep(this.getAttribute('data-mapystep'));
+				});
+			}
+			return this;
+		},
+		onStartChange: function(handler) {
+			utils.on(this.$container.node(), 'startChange', handler);
+			return this;
+		},
+		onFinishChange: function(handler) {
+			utils.on(this.$container.node(), 'finishChange', handler);
 			return this;
 		},
 		setup: function(props) {
@@ -738,7 +814,7 @@
 				}
 			}
 			// Start
-			return this.setPanorama().changeSlide(this.current + 1);
+			return this.setPanorama().changeStep(this.current + 1);
 		},
 		setPanorama: function() {
 			this.panorama.minX = 9999999;
@@ -771,10 +847,12 @@
 			this.panorama.t.translate.y = this.panorama.height() / 2 + this.panorama.minY;
 			return this;
 		},
-		getIndexById: function(id) {
-			var idx = null;
-			for (var i = 0; i < this.length; i++) {
-				if (this.slideList[i].id() === id) {
+		getIndexById: function(id, onSteps) {
+			var idx = null,
+				onSt = onSteps || false,
+				arr = (onSt) ? this.stepList : this.slideList;
+			for (var i = 0; i < arr.length; i++) {
+				if (arr[i].id() === id) {
 					idx = i;
 				}
 			}
@@ -787,6 +865,15 @@
 			} else {
 				// By index position
 				return this.slideList[i];
+			}
+		},
+		step: function(i) {
+			if (typeof i === 'string') {
+				// ById
+				return this.stepList[this.getIndexById(i, true)];
+			} else {
+				// By index position
+				return this.stepList[i];
 			}
 		}
 	};

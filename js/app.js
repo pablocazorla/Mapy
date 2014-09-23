@@ -1,4 +1,11 @@
-Mapy().setup([{
+var myMap = Mapy({
+	onStartChange: function(num) {
+		console.log('me voy de ' + num);
+	},
+	onFinishChange: function(num) {
+		console.log('llego a ' + num);
+	}
+}).setup([{
 	id: "rojo",
 	translate: {
 		x: 978,
@@ -10,8 +17,7 @@ Mapy().setup([{
 	scale: {
 		x: 1.48
 	}
-},
-{
+}, {
 	id: "azul",
 	translate: {
 		x: -69,
@@ -20,8 +26,7 @@ Mapy().setup([{
 	rotate: {
 		y: 60
 	}
-},
-{
+}, {
 	id: "verde",
 	translate: {
 		x: -715,
@@ -30,8 +35,7 @@ Mapy().setup([{
 	rotate: {
 		z: -72
 	}
-},
-{
+}, {
 	id: "gris",
 	translate: {
 		x: 273,
@@ -40,8 +44,7 @@ Mapy().setup([{
 	rotate: {
 		z: 57
 	}
-},
-{
+}, {
 	id: "naranja",
 	translate: {
 		x: 300,
