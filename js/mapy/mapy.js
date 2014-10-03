@@ -514,6 +514,8 @@
 			}, options);
 
 			this.minStep = (this.config.panorama) ? -1 : 0;
+			this.config.initial = (!this.config.panorama && this.config.initial === -1) ? 0 : this.config.initial;
+
 
 			// if not id, select the first node with class 'mapy' and asign some random id
 			if (this.config.id === null) {

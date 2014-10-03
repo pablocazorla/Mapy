@@ -1,5 +1,7 @@
 var myMap = Mapy({
-	goStepOnClick: false
+	goStepOnClick: false,
+	panorama: false,
+	hash: false
 }).setup([{
 	id: "rojo",
 	translate: {
@@ -7,7 +9,7 @@ var myMap = Mapy({
 		y: 353
 	},
 	rotate: {
-		z: -27
+		z: 0//-27
 	},
 	scale: {
 		x: 1.48
