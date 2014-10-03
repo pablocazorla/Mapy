@@ -1,10 +1,5 @@
 var myMap = Mapy({
-	onStartChange: function(num) {
-		console.log('me voy de ' + num);
-	},
-	onFinishChange: function(num) {
-		console.log('llego a ' + num);
-	}
+	goStepOnClick: false
 }).setup([{
 	id: "rojo",
 	translate: {

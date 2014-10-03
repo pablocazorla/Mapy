@@ -10,7 +10,7 @@
 	var u = Mapy.utils,
 		box = function(classname, container, text, tag, toPrepend) {
 			var tagType = tag || 'div',
-				b = u.sel(document.createElement(tagType));
+				b = u.select(document.createElement(tagType));
 			if (toPrepend) {
 				container.prepend(b);
 			} else {

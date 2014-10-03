@@ -194,7 +194,7 @@
 	 * All interaction with DOM nodes is through this function
 	 * @type {function} @return {object}
 	 */
-	utils.sel = function(selection, context) {
+	utils.select = function(selection, context) {
 		var selectorNode = function(selection, context) {
 			return this.init(selection, context);
 		};
@@ -257,7 +257,7 @@
 			toArray: function() {
 				var a = [];
 				for (var i = 0; i < this.length; i++) {
-					var el = utils.sel(this.elem[i]);
+					var el = utils.select(this.elem[i]);
 					el.t.centered = true;
 					el.transform();
 					a.push(el);
@@ -305,7 +305,7 @@
 				if (typeof el.mapySelector !== 'undefined') {
 					el.append(this);
 				} else {
-					utils.sel(el).append(this);
+					utils.select(el).append(this);
 				}
 				return this;
 			},
@@ -488,6 +488,7 @@
 
 			/* Initial configuration
 			 **************************************/
+			var self = this;
 			this.config = utils.extendObject({
 				id: null,
 				margin: 20,
@@ -495,12 +496,28 @@
 				duration: 1000,
 				circular: true,
 				initial: -1,
-				onInit: function() {}
+				panorama: true,
+				hash: true,
+				onInit: function() {},
+				goStepOnClick: true,
+				keyboard: {
+					prev: [37, 38],
+					next: [39, 40]
+				},
+				cssClasses: {
+					mapy: 'mapy',
+					slide: 'slide',
+					step: 'step',
+					ready: 'mapy-ready',
+					notSupported: 'mapy-not-supported'
+				}
 			}, options);
+
+			this.minStep = (this.config.panorama) ? -1 : 0;
 
 			// if not id, select the first node with class 'mapy' and asign some random id
 			if (this.config.id === null) {
-				this.config.id = utils.sel('.mapy').id();
+				this.config.id = utils.select('.' + this.config.cssClasses.mapy).id();
 			}
 
 			// For 'Edit Mode'. Default = false
@@ -542,18 +559,18 @@
 			 **************************************/
 
 			// Store selections. Every selection's name start with '$' to easy recognizing
-			this.$container = utils.sel('#' + this.config.id);
+			this.$container = utils.select('#' + this.config.id);
 
 			if (mapySupported) {
 				if (this.$container.length > 0) {
-					this.$slides = utils.sel('.slide', this.$container.node()).centered();
+					this.$slides = utils.select('.' + this.config.cssClasses.slide, this.$container.node()).centered();
 
 					// Array of slides used to setup, navigate between slides, etc.
 					this.slideList = this.$slides.toArray();
 					this.length = this.slideList.length;
 					this.stepList = [];
 					for (var i = 0; i < this.length; i++) {
-						if (this.slideList[i].hasClass('step')) {
+						if (this.slideList[i].hasClass(this.config.cssClasses.step)) {
 							this.stepList.push(this.slideList[i]);
 						}
 					}
@@ -564,8 +581,8 @@
 					}
 
 					// New node elements, to manage the visualization
-					this.$scaler = utils.sel(document.createElement('div'));
-					this.$moveRotater = utils.sel(document.createElement('div'));
+					this.$scaler = utils.select(document.createElement('div'));
+					this.$moveRotater = utils.select(document.createElement('div'));
 
 					/* Add the new nodes to the main container, and wrap all slides
 			 * @Structure:			 
@@ -618,8 +635,8 @@
 					// Set Events
 					.setEvents(this);
 
-					this.$container.addClass('mapy-ready');
-					utils.cons(':-) Mapy for #' + this.config.id + ' ready.');
+					this.$container.addClass(this.config.cssClasses.ready);
+					utils.cons(':-) Mapy for #' + this.config.id + ' is ready.');
 					this.config.onInit();
 
 					// trigger initial actions
@@ -635,7 +652,7 @@
 					return nullMapy;
 				}
 			} else {
-				this.$container.addClass('mapy-ready').addClass('mapy-not-supported');
+				this.$container.addClass(this.config.cssClasses.ready).addClass(this.config.cssClasses.notSupported);
 				utils.cons(':-( Sorry, your browser does not support Mapy features.');
 				return nullMapy;
 			}
@@ -649,7 +666,7 @@
 			this.mod = this.width / this.height;
 			return this;
 		},
-		changeStep: function(num, onStart, onFinish) {
+		changeStep: function(num) {
 			if (!this.animating && this.current !== num && !this.disable) {
 				var self = this;
 				startChange.from = this.current;
@@ -663,12 +680,13 @@
 				this.current = num;
 				this.animating = true;
 				this.setZoom().setPosition();
-				if (this.current >= 0) {
-					utils.hash(this.stepList[this.current].id() + '-slide');
-				} else {
-					utils.hash('');
+				if (this.config.hash) {
+					if (this.current >= 0) {
+						utils.hash(this.stepList[this.current].id() + '-' + this.config.cssClasses.slide);
+					} else {
+						utils.hash('');
+					}
 				}
-
 
 				setTimeout(function() {
 					self.animating = false;
@@ -677,33 +695,33 @@
 			}
 			return this;
 		},
-		prevStep: function(onStart, onFinish) {
+		prevStep: function() {
 			var num = this.current - 1;
-			if (num < -1) {
+			if (num < this.minStep) {
 				if (this.config.circular) {
-					this.changeStep(this.stepLength - 1, onStart, onFinish);
+					this.changeStep(this.stepLength - 1);
 				}
 			} else {
-				this.changeStep(num, onStart, onFinish);
+				this.changeStep(num);
 			}
 			return this;
 		},
-		nextStep: function(onStart, onFinish) {
+		nextStep: function() {
 			var num = this.current + 1;
 			if (num >= this.stepLength) {
 				if (this.config.circular) {
-					this.changeStep(-1, onStart, onFinish);
+					this.changeStep(this.minStep);
 				}
 			} else {
-				this.changeStep(num, onStart, onFinish);
+				this.changeStep(num);
 			}
 
 			return this;
 		},
-		gotoStep: function(num, onStart, onFinish) {
+		gotoStep: function(num) {
 			var n = utils.toNumber(num, -99);
-			if (n >= -1 && n < this.stepLength) {
-				this.changeStep(n, onStart, onFinish);
+			if (n >= this.minStep && n < this.stepLength) {
+				this.changeStep(n);
 			}
 			return this;
 		},
@@ -774,23 +792,29 @@
 				self.setSizes().setZoom();
 			});
 
-			utils.onKeyPress(window, 37, function() {
-				self.prevStep();
-			});
-			utils.onKeyPress(window, 38, function() {
-				self.prevStep();
-			});
-			utils.onKeyPress(window, 39, function() {
-				self.nextStep();
-			});
-			utils.onKeyPress(window, 40, function() {
-				self.nextStep();
-			});
+			if (this.config.keyboard) {
+				if (typeof this.config.keyboard.prev !== 'undefined') {
+					for (var i = 0; i < this.config.keyboard.prev.length; i++) {
+						utils.onKeyPress(window, this.config.keyboard.prev[i], function() {
+							self.prevStep();
+						});
+					}
+				}
+				if (typeof this.config.keyboard.next !== 'undefined') {
+					for (var i = 0; i < this.config.keyboard.next.length; i++) {
+						utils.onKeyPress(window, this.config.keyboard.next[i], function() {
+							self.nextStep();
+						});
+					}
+				}
+			}
 
 			for (var i = 0; i < this.stepLength; i++) {
 				this.stepList[i].node().setAttribute('data-mapystep', i);
 				utils.on(this.stepList[i].node(), 'click', function() {
-					self.gotoStep(this.getAttribute('data-mapystep'));
+					if (self.config.goStepOnClick) {
+						self.gotoStep(this.getAttribute('data-mapystep'));
+					}
 				});
 			}
 			return this;
