@@ -18,7 +18,9 @@
 	 */
 	utils.cssfix = (function() {
 		var prefixes = 'Webkit Moz O ms'.split(' '),
+			cssprefixes = '-webkit- -moz- -o- -ms-'.split(' '),
 			cache = {},
+			csscache = {},
 			capitalize = function(str) {
 				return str.charAt(0).toUpperCase() + str.slice(1);
 			},
@@ -30,21 +32,28 @@
 				}
 				return camelStr;
 			};
-		return function(property) {
+		return function(prop, cssClass) {
+			var property = prop.toLowerCase();
 			if (typeof cache[property] === 'undefined') {
 				var camelProperty = toCamel(property),
 					capitalizedProperty = capitalize(camelProperty),
-					prefixedProperties = (property + ' ' + camelProperty + ' ' + prefixes.join(capitalizedProperty + ' ') + capitalizedProperty).split(' ');
-
+					prefixedProperties = (camelProperty + ' ' + prefixes.join(capitalizedProperty + ' ') + capitalizedProperty).split(' ');
+				cssprefixedProperties = (property + ' ' + cssprefixes.join(property + ' ') + property).split(' ');
 				cache[property] = null;
+				csscache[property] = null;
 				for (var i in prefixedProperties) {
 					if (dummyStyles[prefixedProperties[i]] !== undefined) {
 						cache[property] = prefixedProperties[i];
+						csscache[property] = cssprefixedProperties[i];
 						break;
 					}
 				}
 			}
-			return cache[property];
+			if (cssClass) {
+				return csscache[property];
+			} else {
+				return cache[property];
+			}
 		}
 	})();
 
@@ -917,6 +926,18 @@
 	Mapy.onInit = function(ActionName) {
 		initialActions.push(ActionName);
 	};
+
+	Mapy.prefix = (function() {
+		var t = utils.cssfix('transform', true),
+			prefixes = '-webkit- -moz- -o- -ms-'.split(' '),
+			p = '';
+		for (var i = 0; i < prefixes.length; i++) {
+			if (t.indexOf(prefixes[i]) !== -1) {
+				p = prefixes[i];
+			}
+		}
+		return p;
+	})();
 
 	/*
 	 * Public shortcut to Mapy

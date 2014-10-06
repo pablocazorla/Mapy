@@ -9,7 +9,7 @@ var myMap = Mapy({
 		y: 353
 	},
 	rotate: {
-		z: 0//-27
+		z: 0 //-27
 	},
 	scale: {
 		x: 1.48
@@ -48,3 +48,29 @@ var myMap = Mapy({
 		y: -300
 	}
 }]);
+
+//myMap.mousebalance();
+
+
+
+var myAn = Mapy.keyAnimation('.quad-blue', {
+	'0%': {
+		'left': '50px',
+		'top' : '15px'
+	},
+	'50%': {
+		'left': '460px'
+	},
+	'100%': {
+		'left': '10px',
+		'top' : '100px'
+	}
+}, {
+	iterationCount: 'infinite',
+	duration: 6000
+});
+
+
+setTimeout(function() {
+	myAn.start();
+}, 5000);

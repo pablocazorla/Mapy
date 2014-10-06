@@ -59,5 +59,4 @@
 			firstMoved = false;
 		});
 	};
-	Mapy.onInit('mousebalance');
 })();

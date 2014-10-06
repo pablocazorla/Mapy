@@ -5,6 +5,11 @@ body{font: 14px/1.3em sans-serif;}
 }
 .slide{opacity: .4}
 
+
+.quad-blue{
+	position: absolute;top:100px;left: 100px;width: 100px;height: 100px;background: blue;
+}
+
 /* EDITOR ***********************************************/
 /*
 .mapy-editor{position: absolute;top: 5px;right: 5px;z-index: 10000;font: 10px/1.3em sans-serif;text-align: center;width:70px;padding: 0;margin: 0;background-color: #FFF;color:#666;border: solid 1px #AAA;border-radius:4px}
