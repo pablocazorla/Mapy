@@ -927,8 +927,8 @@
 		initialActions.push(ActionName);
 	};
 
-	Mapy.prefix = (function() {
-		var t = utils.cssfix('transform', true),
+	Mapy.prefix = function(prop) {
+		var t = utils.cssfix(prop, true),
 			prefixes = '-webkit- -moz- -o- -ms-'.split(' '),
 			p = '';
 		for (var i = 0; i < prefixes.length; i++) {
@@ -937,7 +937,7 @@
 			}
 		}
 		return p;
-	})();
+	};
 
 	/*
 	 * Public shortcut to Mapy

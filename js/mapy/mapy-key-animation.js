@@ -15,7 +15,7 @@
 
 	$style.attr('id', 'mapy-keyanimation-styles').appendTo(document.body);
 
-	var pfx = Mapy.prefix,
+	var pfx = Mapy.prefix('animation'),
 		idCounter = 0,
 		kaList = [],
 		drawKaList = function() {
@@ -68,6 +68,7 @@
 				txt += '\t}\n';
 			}
 			txt += '}';
+			console.log(txt);
 			return txt;
 		},
 
