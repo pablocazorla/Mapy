@@ -1,8 +1,4 @@
-var myMap = Mapy({
-	goStepOnClick: false,
-	panorama: false,
-	hash: false
-}).setup([{
+var myMap = Mapy().setup([{
 	id: "rojo",
 	translate: {
 		x: 978,
@@ -51,7 +47,7 @@ var myMap = Mapy({
 
 //myMap.mousebalance();
 
-
+/*
 
 var myAn = Mapy.keyAnimation('.quad-blue', {
 	'0%': {
@@ -74,3 +70,4 @@ var myAn = Mapy.keyAnimation('.quad-blue', {
 setTimeout(function() {
 	myAn.start();
 }, 5000);
+*/

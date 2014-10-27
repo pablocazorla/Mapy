@@ -11,7 +11,13 @@
 	 * @type {object}
 	 */
 	var dummyStyles = document.createElement('div').style,
-		computedStyles = window.getComputedStyle(document.createElement('div'));
+		computedStyles = (function() {
+			if (window.getComputedStyle) {
+				return window.getComputedStyle(document.createElement('div'));
+			} else {
+				return document.createElement('div').currentStyle;
+			}
+		})();
 
 	/* It return right css property name, according to current prefix browser. Also convert the string to camel case
 	 * @type {function} @return {string}
